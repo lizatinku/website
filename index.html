@@ -521,13 +521,13 @@
                                             <canvas id="chart8" width="450" height="300"></canvas>
                                             <div class="partition-stage-labels" aria-label="Partition stages">
                                                 <div class="partition-stage partition-stage-1">
-                                                    <strong>Stage 1</strong><span class="partition-stage-detail">f partitions</span>
+                                                    <strong>Stage 1</strong><span class="partition-stage-detail">f partition</span>
                                                 </div>
                                                 <div class="partition-stage partition-stage-2">
-                                                    <strong>Stage 2</strong><span class="partition-stage-detail">f+1 partitions</span>
+                                                    <strong>Stage 2</strong><span class="partition-stage-detail">f+1 partition</span>
                                                 </div>
                                                 <div class="partition-stage partition-stage-3">
-                                                    <strong>Stage 3</strong><span class="partition-stage-detail">f partitions</span>
+                                                    <strong>Stage 3</strong><span class="partition-stage-detail">f partition</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -2810,7 +2810,6 @@
               scales: {
                 y: {
                   beginAtZero: false,
-                  max: 1100000,
                   title: {
                     display: true,
                     text: 'Client Latency (ms)'
@@ -2840,11 +2839,6 @@
 
             var ctx = el.getContext('2d');
 
-            const partitionStages = [
-                {title: 'Stage 1', detail: 'f partitions', color: '89, 180, 169'},
-                {title: 'Stage 2', detail: 'f+1 partitions', color: '255, 87, 51'},
-                {title: 'Stage 3', detail: 'f partitions', color: '120, 151, 255'}
-            ];
             const partitionStagesPlugin = {
                 id: 'partitionStages',
                 afterLayout(chart) {
@@ -2854,37 +2848,6 @@
                     stageLabels.style.marginLeft = `${chart.chartArea.left}px`;
                     stageLabels.style.width = `${chart.chartArea.width}px`;
                     stageLabels.style.marginRight = '0';
-                },
-                beforeDraw(chart) {
-                    const {ctx, chartArea} = chart;
-                    if (!chartArea) return;
-
-                    ctx.save();
-                    ctx.fillStyle = `rgba(${partitionStages[0].color}, 0.07)`;
-                    ctx.fillRect(
-                        chartArea.left,
-                        chartArea.top,
-                        chartArea.width,
-                        chartArea.height
-                    );
-                    ctx.restore();
-                },
-                afterDatasetsDraw(chart) {
-                    const {ctx, chartArea, scales} = chart;
-                    const x = scales.x;
-                    if (!chartArea || !x) return;
-
-                    ctx.save();
-                    ctx.setLineDash([4, 4]);
-                    ctx.lineWidth = 1;
-                    ctx.strokeStyle = 'rgba(239, 246, 255, 0.7)';
-                    [x.getPixelForTick(10), x.getPixelForTick(20)].forEach(boundary => {
-                        ctx.beginPath();
-                        ctx.moveTo(boundary, chartArea.top);
-                        ctx.lineTo(boundary, chartArea.bottom);
-                        ctx.stroke();
-                    });
-                    ctx.restore();
                 },
             };
 
@@ -2922,11 +2885,6 @@
                             if (i >= 10 && i < 20) return 4;
                             return 2;
                         },
-                        borderDash: (ctx) => {
-                            const i = ctx.p0DataIndex;
-                            if (i >= 10 && i < 20) return [6, 4];
-                            return [];
-                        }
                     }
                     },
                     {
@@ -2969,8 +2927,7 @@
                                 maxTicksLimit: 6
                             },
                             grid: {
-                                color: 'rgba(239, 246, 255, 0.12)',
-                                drawBorder: false
+                                display: false
                             },
                             border: {
                                 display: false
